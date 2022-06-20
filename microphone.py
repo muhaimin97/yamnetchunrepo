@@ -94,11 +94,11 @@ class Microphone:
             '''
             try:
                 audio_frame_array = np.concatenate((prev_audio_frame_array,audio_frame),axis=0)
-                print("Axis 0 ", str(audio_frame_array.ndim))
+                #print("Axis 0 ", str(audio_frame_array.ndim))
             except:
                 #audio_frame_array = np.concatenate((prev_audio_frame_array,audio_frame),axis=1)
                 audio_frame_array = np.concatenate((prev_audio_frame_array,audio_frame),axis=1)
-                print("Axis 1 ", str(audio_frame_array.ndim))
+                #print("Axis 1 ", str(audio_frame_array.ndim))
                 
             
         

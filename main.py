@@ -1,11 +1,13 @@
+from email.mime import audio
 from microphone import Microphone
 from sound_detection import load_model,infer
 import soundfile as sf
 import time
 import numpy as np
+import yamnet.yamnet
 
 
-def listen(listen_window = 1):
+def listen(device_name, listen_window = 1):
     """
     Function that listens from the latest <listen_window> amount of seconds from
     the microphone and prints the results to console. Used for unit testing.
@@ -31,25 +33,27 @@ def listen(listen_window = 1):
     count = 1
     while True:
         print("Listening")
-        filename = "builtin" + str(count) + ".wav"
+        wavfile = device_name + str(count) + ".wav"
         audio_frame_array = mic.get_all_numpy_tf(audio_frame_array)
         
 
         if count % audio_window_trigger == 0:
-            filename = "builtin" + str(count) + ".wav"
+            wavfile = device_name + str(count) + ".wav"
 
             try: 
-                sf.write(filename, audio_frame_array, 16000)
-                print("Audio frame array: ", audio_frame_array)
+                sf.write(wavfile, audio_frame_array, 16000)
+                #print("Audio frame array: ", audio_frame_array)
             except:
-                audio_frame_array = np.transpose(audio_frame_array)
-                audio_frame_array.flatten()
-                sf.write(filename, audio_frame_array, 16000)
-                print("Audio frame array: ", audio_frame_array)
+                wav_frame_array = audio_frame_array
+                wav_frame_array = np.transpose(wav_frame_array)
+                wav_frame_array.flatten()
+                sf.write(wavfile, wav_frame_array, 16000)
+                #print("Audio frame array: ", audio_frame_array)
 
             results = infer(audio_frame_array,model,class_names)
             print(results)
-            save_results(filename, results, "builtin.txt", count)
+            text_file = device_name + ".txt"
+            save_results(wavfile, results, text_file, count)
 
             audio_frame_array = []
             assert len(audio_frame_array) == 0
@@ -71,4 +75,7 @@ def save_results(audiofile, res, result_file, pos):
 
 
 if __name__ == "__main__":
-    listen()
+    listen("usbmic")
+    #classnames = yamnet.yamnet.class_names("yamnet\\yamnet_class_map.csv")
+
+    #print(len((classnames))
